@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Natal Bersama - Trah Soemarsoen</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <style>
+    /* --- RESET & VARIABLE --- */
+    :root {
+        --bg-dark: #000000;
+        --bg-panel: #1e293b;
+        --text-primary: #ffffff;
+        --text-secondary: #cbd5e1;
+        --accent-gold: #D4AF37;
+        --border: #334155;
+        --font-serif: 'Playfair Display', serif;
+        --font-sans: 'Inter', sans-serif;
+    }
+
+    /* SCROLL LOCK AWAL DIHAPUS, DITANGANI OLEH JS SAAT TOMBOL DIKLIK */
+    html, body {
+      margin: 0; padding: 0; height: 100%; width: 100%;
+      background: var(--bg-dark); 
+      overflow-y: hidden; /* SCROLL LOCK Awal */
+      font-family: var(--font-sans); color: var(--text-primary);
+      -webkit-font-smoothing: antialiased;
+      scroll-behavior: smooth;
+    }
+    
+    /* --- LOGIN & EVENT DETAILS CONTAINER --- */
+    #loginScreen {
+        position: relative; inset: 0; z-index: 1000; 
+        background: transparent;
+        height: 100vh; /* Tinggi awal, akan diubah oleh JS */
+        overflow: hidden; /* Overflow awal, akan diubah oleh JS */
+        width: 100%;
+    }
+    
+    #loginMainSection {
+        height: 100vh; display: flex; align-items: center; justify-content: center;
+        position: relative; z-index: 2;
+        padding: 50px 20px;
+        pointer-events: auto;
+    }
+
+    #loginContentWrapper { 
+        position: relative; width: 90%; max-width: 550px; padding: 50px; text-align: center; 
+        background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(20px); border-radius: 30px; 
+        border: 1px solid rgba(212, 175, 55, 0.3);
+        box-shadow: 0 25px 60px rgba(0,0,0,0.6);
+    }
+    
+    .login-title { font-family: var(--font-serif); font-size: 3.5rem; font-weight: 700; margin-bottom: 5px; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.5); font-style: italic; }
+    .login-subtitle { font-family: var(--font-sans); font-size: 0.9rem; letter-spacing: 4px; text-transform: uppercase; color: var(--accent-gold); margin-bottom: 40px; font-weight: 600; }
+
+    .time-card { 
+        display: inline-flex; flex-direction: column; align-items: center; 
+        padding: 15px 12px; margin: 0 6px; min-width: 75px; 
+        background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
+        border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    .time-number { font-family: var(--font-serif); font-size: 2.5rem; font-weight: 400; line-height: 1; color: #fff; text-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+    .time-label { font-family: var(--font-sans); font-size: 0.7rem; color: var(--accent-gold); text-transform: uppercase; margin-top: 8px; letter-spacing: 1px; }
+    
+    button { 
+        margin-top: 10px; padding: 14px 45px; 
+        background: var(--accent-gold); color: #000; 
+        border: none; border-radius: 30px; 
+        font-family: var(--font-sans); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem;
+        cursor: pointer; transition: all 0.3s; box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+    }
+    button:hover { background: #fff; transform: translateY(-3px); box-shadow: 0 10px 25px rgba(255, 255, 255, 0.4); }
+
+    .scroll-down-btn {
+        margin-top: 30px; background: transparent; border: 1px solid var(--accent-gold); color: var(--accent-gold);
+        box-shadow: none; font-size: 0.8rem; padding: 10px 25px;
+    }
+    .scroll-down-btn:hover { background: rgba(212, 175, 55, 0.1); color: #fff; border-color: #fff; transform: translateY(0); }
+
+    /* --- DETAILS SECTION --- */
+    #eventDetailsSection {
+        min-height: 100vh; 
+        background: #0f172a; 
+        position: relative; 
+        z-index: 2;
+        padding: 60px 20px; 
+        display: flex; 
+        flex-direction: column; 
+        align-items: center; 
+        justify-content: center;
+        overflow: visible;
+    }
+    
+    .minimal-container {
+        width: 100%; max-width: 1000px;
+        background: rgba(30, 41, 59, 0.4); 
+        backdrop-filter: blur(15px);
+        border-radius: 24px; 
+        border: 1px solid rgba(255,255,255,0.08);
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+    }
+
+    .section-title {
+        text-align: center;
+        font-family: var(--font-serif);
+        font-size: 2.2rem;
+        color: var(--accent-gold);
+        font-weight: 700;
+        margin-bottom: 10px;
+        font-style: italic;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .info-card {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.05);
+        border-radius: 16px;
+        padding: 25px;
+        text-align: center;
+        transition: transform 0.3s ease, background 0.3s;
+        display: flex; 
+        flex-direction: column; 
+        align-items: center; 
+        justify-content: flex-start; 
+        min-height: 220px; 
+    }
+    .info-card:hover {
+        transform: translateY(-5px);
+        background: rgba(255,255,255,0.06);
+        border-color: var(--accent-gold);
+    }
+
+    .ic-icon-bw {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+        color: #fff; 
+        display: block;
+        margin-top: 20px;
+        filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5));
+    }
+
+    .ic-label {
+        font-family: var(--font-sans);
+        color: var(--accent-gold);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin-bottom: 8px;
+        font-weight: 600;
+        margin-top: 10px; 
+        z-index: 2; position: relative;
+    }
+    .ic-value {
+        font-family: var(--font-serif);
+        color: #fff;
+        font-size: 1.1rem;
+        line-height: 1.4;
+    }
+    .ic-sub {
+        font-family: var(--font-sans);
+        color: #94a3b8;
+        font-size: 0.85rem;
+        margin-top: 5px;
+    }
+
+    /* CALENDAR ANIMATION STYLES */
+    .calendar-wrapper {
+        position: relative; width: 100px; height: 100px; perspective: 1000px; 
+        margin: 10px auto 25px auto; 
+        z-index: 1; 
+        flex-shrink: 0;
+    }
+    .cal-page {
+        position: absolute; width: 100%; height: 100%; background: #fff; color: #000;
+        border-radius: 10px; text-align: center; padding-top: 15px; font-weight: bold;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3); transform-origin: top;
+        transition: transform 0.5s; display: flex; flex-direction: column; align-items: center;
+    }
+    .cal-month { font-size: 0.7rem; text-transform: uppercase; background: #d00; color: #fff; position: absolute; top: 0; left: 0; width: 100%; padding: 2px 0; border-radius: 8px 8px 0 0; }
+    .cal-day { font-size: 2.5rem; margin-top: 10px; font-family: var(--font-serif); color: #000; }
+    
+    @keyframes tearOff {
+        0% { transform: rotateX(0deg); opacity: 1; }
+        50% { transform: rotateX(-60deg) skewX(10deg); opacity: 0.8; }
+        100% { transform: rotateX(-120deg) translateY(50px); opacity: 0; }
+    }
+    .tear-anim { animation: tearOff 0.6s forwards ease-in; }
+
+    /* VENUE SLIDESHOW & MAP SECTION (SLIDE FOTO) */
+    .venue-slider-container {
+        width: 100%;
+        height: 250px;
+        border-radius: 16px;
+        overflow: hidden;
+        position: relative;
+        margin-bottom: 15px;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .venue-slide {
+        position: absolute;
+        width: 100%; height: 100%;
+        opacity: 0;
+        animation: venueFade 12s infinite; 
+    }
+    .venue-slide img {
+        width: 100%; height: 100%; object-fit: cover;
+    }
+    .venue-slide:nth-child(1) { animation-delay: 0s; }
+    .venue-slide:nth-child(2) { animation-delay: 4s; }
+    .venue-slide:nth-child(3) { animation-delay: 8s; }
+    
+    @keyframes venueFade {
+        0% { opacity: 0; } 10% { opacity: 1; } 33% { opacity: 1; } 43% { opacity: 0; } 100% { opacity: 0; }
+    }
+    .venue-caption {
+        position: absolute; bottom: 10px; left: 10px;
+        background: rgba(0,0,0,0.6); color: #fff;
+        padding: 5px 12px; border-radius: 20px;
+        font-size: 0.75rem; backdrop-filter: blur(4px);
+        font-weight: 600; letter-spacing: 1px;
+    }
+    
+    .map-container-full, #aftermovieSection .map-area-content {
+        width: 100%;
+        height: 300px;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid rgba(255,255,255,0.1);
+        position: relative;
+    }
+    
+    .map-container-full iframe, #aftermovieSection .map-area-content iframe {
+        width: 100%; height: 100%; border: 0;
+        filter: grayscale(20%) contrast(1.1); 
+        transition: filter 0.3s;
+    }
+    
+    /* AFTERMOVIE / PARK SECTION */
+    #aftermovieSection h3 {
+        font-weight: normal;
+        font-style: italic;
+        margin-top: 0;
+        color: var(--accent-gold);
+        text-align: left;
+        margin-bottom: 15px;
+    }
+    #aftermovieSection .map-area-content {
+        height: 400px; 
+        margin-bottom: 0;
+    }
+
+    /* --- FOOTER SPONSORS --- */
+    .footer-section {
+        width: 100%; max-width: 1000px; margin-top: 40px;
+        text-align: center; color: #64748b;
+    }
+    
+    .sponsor-marquee-wrapper {
+        background: #0f172a; 
+        border-top: 1px solid #334155; border-bottom: 1px solid #334155;
+        padding: 15px 0; overflow: hidden; white-space: nowrap; position: relative;
+        margin-bottom: 30px;
+    }
+    .sponsor-track {
+        display: inline-block;
+        animation: marqueeSponsor 20s linear infinite;
+    }
+    .sponsor-item {
+        display: inline-flex; align-items: center; gap: 8px;
+        margin: 0 30px; font-family: var(--font-sans);
+        font-weight: 600; color: #94a3b8; font-size: 0.9rem;
+        opacity: 0.7; transition: opacity 0.3s;
+    }
+    
+    @keyframes marqueeSponsor {
+        0% { transform: translateX(0); } 100% { transform: translateX(-50%); }
+    }
+
+    .footer-info {
+        display: flex; flex-direction: column; align-items: center; gap: 15px;
+    }
+    .made-with {
+        font-family: 'Playfair Display', serif; font-style: italic;
+        font-size: 1rem; color: #fff;
+    }
+    
+    .contact-icons {
+        display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;
+    }
+    .contact-link {
+        display: flex; align-items: center; gap: 8px;
+        color: #cbd5e1; text-decoration: none; font-size: 0.85rem;
+        border: 1px solid rgba(255,255,255,0.2);
+        padding: 8px 16px; border-radius: 50px;
+        transition: all 0.3s;
+    }
+    .contact-link:hover {
+        background: #fff; color: #000; border-color: #fff;
+    }
+    
+    /* --- BACKGROUND SLIDESHOW --- */
+    .bg-slideshow { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; opacity: 1; }
+    .bg-slideshow div { position: absolute; width: 100%; height: 100%; background-size: cover; background-position: center; opacity: 0; animation: slideShowAnim 24s infinite; }
+    .bg-slideshow div:nth-child(1) { background-image: url('https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80'); animation-delay: 0s; }
+    .bg-slideshow div:nth-child(2) { background-image: url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80'); animation-delay: 6s; }
+    .bg-slideshow div:nth-child(3) { background-image: url('https://images.unsplash.com/photo-1544191696-102dbdaeeaa0?q=80'); animation-delay: 12s; }
+    .bg-slideshow div:nth-child(4) { background-image: url('https://images.unsplash.com/photo-1514525253440-b393452e8d26?q=80'); animation-delay: 18s; }
+    .bg-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1; pointer-events: none; }
+    @keyframes slideShowAnim { 0% { opacity: 0; transform: scale(1.05); } 5% { opacity: 1; transform: scale(1); } 25% { opacity: 1; } 30% { opacity: 0; } 100% { opacity: 0; } }
+
+    /* --- MOBILE ADJUSTMENTS --- */
+    @media (max-width: 768px) {
+       .time-number { font-size: 2rem; } 
+       .login-title { font-size: 2.5rem; }
+       .minimal-container { padding: 25px; width: 95%; }
+       #eventDetailsSection { padding: 40px 10px; }
+       .sponsor-track { animation-duration: 10s; }
+       .contact-icons { flex-direction: column; align-items: center; }
+       .info-grid { grid-template-columns: 1fr; }
+       #loginContentWrapper { padding: 30px 20px; }
+       #aftermovieSection .map-area-content { height: 250px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-slideshow"><div></div><div></div><div></div><div></div></div>
+  <div class="bg-overlay"></div>
+
+  <div id="loginScreen">
+    <div id="loginMainSection">
+        <div id="loginContentWrapper">
+            <div class="login-title">Natal Bersama</div>
+            <div class="login-subtitle">TRAH SOEMARSOEN</div>
+            
+            <div id="countdownSection" style="margin: 40px 0; display:flex; justify-content:center;">
+                <div id="lockdownCountdownTimer"></div>
+            </div>
+            
+            <button class="scroll-down-btn" onclick="scrollToDetails()">Lihat Lokasi & Jadwal ▼</button>
+        </div>
+    </div>
+    
+    <div id="eventDetailsSection">
+        <div class="minimal-container">
+            <div class="section-title">Informasi Acara</div>
+            
+            <div class="info-grid">
+                <div class="info-card">
+                    <div id="calendarFlip" class="calendar-wrapper">
+                        <div class="cal-page" id="calPage">
+                            <div class="cal-month">NOV</div>
+                            <div class="cal-day">24</div>
+                        </div>
+                    </div>
+                    <div class="ic-label">Minggu, 28 Des 2025</div>
+                    <div class="ic-sub">10:00 WIB - Selesai</div>
+                </div>
+
+                <div class="info-card">
+                    <i class="fa-solid fa-location-dot ic-icon-bw"></i>
+                    <div class="ic-label">Lokasi</div>
+                    <div class="ic-value">Taman Balekambang</div>
+                    <div class="ic-sub">Surakarta, Jawa Tengah</div>
+                </div>
+            </div>
+
+            <div class="venue-slider-container">
+                <div class="venue-slide">
+                   <img src="https://images.unsplash.com/photo-1596283597818-8c1056586326?q=80&w=1000&auto=format&fit=crop" alt="Park 1">
+                   <div class="venue-caption">Area Taman Utama</div>
+                </div>
+                <div class="venue-slide">
+                   <img src="https://images.unsplash.com/photo-1558694440-03ade9215d7b?q=80&w=1000&auto=format&fit=crop" alt="Park 2">
+                   <div class="venue-caption">Suasana Asri</div>
+                </div>
+                <div class="venue-slide">
+                   <img src="https://images.unsplash.com/photo-1470723710355-95304d8aece4?q=80&w=1000&auto=format&fit=crop" alt="Park 3">
+                   <div class="venue-caption">Spot Kumpul Keluarga</div>
+                </div>
+            </div>
+
+            <div class="map-container-full">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6142.01806259959!2d110.80905534415213!3d-7.5556376974234185!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a1736886a85cd%3A0xbfb2956209b033ef!2sBalekambang%20Park!5e1!3m2!1sen!2sid!4v1763995818819!5m2!1sen!2sid" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+            
+            <div id="aftermovieSection" class="map-area" style="margin-top: 30px;">
+                <h3 style="margin-bottom: 5px;">Aftermovie Acara Tahun 2023 (TES)</h3> 
+                <div class="map-area-content" style="height: 400px; margin-bottom: 0;">
+                    <iframe 
+                        src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
+                        title="Video Placeholder (TES)"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        referrerpolicy="strict-origin-when-cross-origin" 
+                        allowfullscreen>
+                    </iframe>
+                    <div class="venue-caption">Video Aftermovie</div>
+                </div>
+            </div>
+
+        <div class="footer-section">
+            <div class="sponsor-marquee-wrapper">
+                <div class="sponsor-track">
+                    <span class="sponsor-item"><i class="fa-brands fa-google"></i> Google</span>
+                    <span class="sponsor-item"><i class="fa-solid fa-wand-magic-sparkles"></i> Gemini AI</span>
+                    <span class="sponsor-item">@hizyourbae</span>
+                    <span class="sponsor-item">📷 Hycamera Solo</span>
+                    <span class="sponsor-item">Fujifilm</span>
+                    <span class="sponsor-item" style="opacity:0.3">|</span>
+                    <span class="sponsor-item"><i class="fa-brands fa-google"></i> Google</span>
+                    <span class="sponsor-item"><i class="fa-solid fa-wand-magic-sparkles"></i> Gemini AI</span>
+                    <span class="sponsor-item">@hizyourbae</span>
+                    <span class="sponsor-item">📷 Hycamera Solo</span>
+                    <span class="sponsor-item">Fujifilm</span>
+                    <span class="sponsor-item" style="opacity:0.3">|</span>
+                    <span class="sponsor-item"><i class="fa-brands fa-google"></i> Google</span>
+                    <span class="sponsor-item"><i class="fa-solid fa-wand-magic-sparkles"></i> Gemini AI</span>
+                    <span class="sponsor-item">@hizyourbae</span>
+                    <span class="sponsor-item">📷 Hycamera Solo</span>
+                    <span class="sponsor-item">Fujifilm</span>
+                </div>
+            </div>
+
+            <div class="footer-info">
+                <div class="made-with">
+                    Made with <i class="fa-solid fa-heart"></i> @hizyourbae
+                </div>
+                <div class="contact-icons">
+                    <a href="https://instagram.com/trahsoemarsoen" target="_blank" class="contact-link">
+                        <i class="fa-brands fa-instagram"></i> @trahsoemarsoen
+                    </a>
+                    <a href="https://wa.me/62815xxxxxxx" target="_blank" class="contact-link">
+                        <i class="fa-brands fa-whatsapp"></i> 0815 xxxx xxxx
+                    </a>
+                    <a href="https://www.youtube.com/@DSoemarsoen_FAMILY" target="_blank" class="contact-link">
+                        <i class="fa-brands fa-youtube"></i> DSoemarsoen FAMILY
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <script>
+    // FUNGSI UTAMA COUNTDOWN
+    function startCountdown(targetTime) {
+        const timerEl = document.getElementById("lockdownCountdownTimer");
+        const updateTimer = () => {
+            const now = Date.now(); 
+            const dist = targetTime - now;
+
+            if (dist < 0) { 
+                // Jika waktu habis, sembunyikan timer 
+                document.getElementById("countdownSection").style.display = 'none'; 
+                return; 
+            }
+            
+            const days = Math.floor(dist / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((dist % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((dist % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((dist % (1000 * 60)) / 1000);
+            
+            timerEl.innerHTML = `<div class="time-card"><span class="time-number">${days}</span><span class="time-label">Hari</span></div><div class="time-card"><span class="time-number">${String(hours).padStart(2, '0')}</span><span class="time-label">Jam</span></div><div class="time-card"><span class="time-number">${String(minutes).padStart(2, '0')}</span><span class="time-label">Menit</span></div><div class="time-card"><span class="time-number" style="color:#ccc;">${String(seconds).padStart(2, '0')}</span><span class="time-label">Detik</span></div>`;
+        };
+        
+        updateTimer(); 
+        setInterval(updateTimer, 1000);
+    }
+    
+    // FUNGSI ANIMASI KALENDER
+    function triggerCalendarAnim() {
+        const wrapper = document.getElementById('calendarFlip');
+        if(!wrapper) return;
+        wrapper.querySelectorAll('.tear-anim').forEach(e => e.remove());
+        
+        const page = document.getElementById('calPage');
+        const monthEl = page.querySelector('.cal-month');
+        const dayEl = page.querySelector('.cal-day');
+        
+        let currentDay = 24; 
+        let currentMonth = "NOV";
+
+        monthEl.innerText = "NOV";
+        dayEl.innerText = "24";
+        monthEl.style.background = "#d00";
+        monthEl.style.color = "#fff";
+
+        const interval = setInterval(() => {
+            const newPage = page.cloneNode(true);
+            newPage.classList.add('tear-anim');
+            wrapper.appendChild(newPage);
+            setTimeout(() => newPage.remove(), 600);
+
+            currentDay++;
+            if(currentMonth === "NOV" && currentDay > 30) {
+                currentMonth = "DES";
+                currentDay = 1;
+                monthEl.style.background = "var(--accent-gold)";
+                monthEl.style.color = "#000";
+            }
+            
+            monthEl.innerText = currentMonth;
+            dayEl.innerText = currentDay;
+
+            if(currentMonth === "DES" && currentDay === 28) {
+                clearInterval(interval);
+                monthEl.innerText = "DES";
+                dayEl.innerText = "28";
+                monthEl.style.background = "var(--accent-gold)";
+                monthEl.style.color = "#000";
+            }
+        }, 150);
+    }
+
+    // FUNGSI SCROLL AKTIF KEMBALI DAN TAMPILKAN DETAIL
+    window.scrollToDetails = () => {
+        const details = document.getElementById('eventDetailsSection');
+        const loginScreen = document.getElementById('loginScreen');
+
+        // 1. Hapus scroll lock dari body (Mengaktifkan kembali scrolling)
+        document.body.style.overflowY = 'auto';
+        
+        // 2. Hapus batasan tinggi pada container utama agar konten detail bisa terlihat sepenuhnya
+        loginScreen.style.height = 'auto';
+        loginScreen.style.overflow = 'visible';
+
+        // 3. Scroll ke bagian detail acara
+        setTimeout(() => {
+            details.scrollIntoView({ behavior: 'smooth' });
+            // 4. Jalankan animasi kalender
+            setTimeout(triggerCalendarAnim, 500); 
+        }, 50); 
+    };
+
+    // INISIALISASI
+    window.onload = function() { 
+        // Tanggal Target Countdown: 26 Desember 2025, 10:00:00 WIB
+        const targetDate = new Date(2025, 11, 26, 10, 0, 0).getTime();
+        startCountdown(targetDate);
+    };
+  </script>
+</body>
+</html>
